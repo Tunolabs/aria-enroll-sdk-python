@@ -1,0 +1,84 @@
+# aria-enroll-sdk — Python SDK for non-custodial ARIA Protocol agent enrollment.
+#
+# Functional twin of @aria-registry/enroll-sdk-node and @aria-registry/enroll-sdk-web.
+# Same manifest schema, same JCS canonical JSON, same composite signature
+# suite (ML-DSA-65 + Ed25519). Golden vectors shared with the TS SDKs prove
+# byte-identical canonical output, so aria-core can't distinguish which
+# client produced an enrollment manifest.
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aria-enroll-sdk"
+version = "1.2.0"
+description = "Non-custodial agent enrollment for the ARIA Protocol. Generates a composite (ML-DSA-65 + Ed25519) keypair locally; the registry never sees the private key."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+authors = [{ name = "Tunolabs" }]
+keywords = [
+    "aria", "agent-identity", "ai-agent", "did", "verifiable-credentials",
+    "enrollment", "non-custodial", "post-quantum", "ml-dsa", "ed25519",
+    "w3c-vc", "ariaprotocol",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security :: Cryptography",
+]
+
+dependencies = [
+    # Ed25519 keygen + signing + PKCS8 PEM. Industry standard, audited.
+    "cryptography>=42.0",
+    # ML-DSA-65 (FIPS 204) via Open Quantum Safe bindings. Wheels include
+    # liboqs precompiled for linux/macos/win × amd64/arm64.
+    "pqcrypto>=0.3",
+    # Sync + async HTTP. Async lets agent frameworks (LangChain, LangGraph,
+    # asyncio worker pools) call enroll() without spinning up a thread.
+    "httpx>=0.27",
+    # CLI ergonomics.
+    "click>=8.1",
+]
+
+[project.urls]
+Homepage = "https://aria.bar/docs/sdk"
+Repository = "https://github.com/Tunolabs/aria-enroll-sdk-python"
+Documentation = "https://aria.bar/docs/sdk"
+Issues = "https://github.com/Tunolabs/aria-enroll-sdk-python/issues"
+
+[project.scripts]
+# Module entry point: `aria-enroll` resolves to aria_enroll_sdk.cli:main.
+# Matches the Node SDK's `aria` binary semantically; renamed to
+# `aria-enroll` so it doesn't shadow other tools in the agent's PATH.
+aria-enroll = "aria_enroll_sdk.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "mypy>=1.10",
+    "ruff>=0.6",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aria_enroll_sdk"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N"]

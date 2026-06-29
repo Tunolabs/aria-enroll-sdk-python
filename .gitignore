@@ -1,0 +1,44 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+develop-eggs/
+.eggs/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+.python-version
+
+# Type checking / linting caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Test artifacts
+.coverage
+htmlcov/
+coverage.xml
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Env / secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Runtime keypair store (created by `aria-enroll`)
+.aria/
